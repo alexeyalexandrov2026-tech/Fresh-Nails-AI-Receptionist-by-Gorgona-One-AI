@@ -35,13 +35,16 @@ export default function ChatInterface() {
     }
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
 
+    const query = inputValue.trim();
     const newUserMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: inputValue.trim(),
+      content: query,
       timestamp: new Date(),
     };
 
@@ -49,17 +52,43 @@ export default function ChatInterface() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response (Mock until Dify API is integrated)
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          query, 
+          conversation_id: conversationId 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.conversation_id) {
+        setConversationId(data.conversation_id);
+      }
+
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Секундочку, проверяю расписание мастеров... (Эта функция скоро будет подключена к Dify и Cal.com)",
+        content: data.answer || "Произошла ошибка связи с AI.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, newAiMessage]);
+    } catch (error) {
+      console.error(error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Извините, сервис временно недоступен. Попробуйте позже.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
