@@ -73,7 +73,7 @@ export default function ChatInterface() {
       const newAiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.answer || "Произошла ошибка связи с AI.",
+        content: data.answer || `[DEBUG] ${data.error || 'unknown'}: ${data.details || 'no details'}`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, newAiMessage]);
