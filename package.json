@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "wrangler deploy"
+    "deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "postinstall": "node scripts/cf-build.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

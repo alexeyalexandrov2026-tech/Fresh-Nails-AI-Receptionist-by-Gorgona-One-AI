@@ -2,9 +2,6 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "fresh-nails-ai-receptionist-by-gorgona-one-ai",
   "compatibility_date": "2026-08-07",
-  "build": {
-    "command": "opennextjs-cloudflare build"
-  },
   "main": ".open-next/worker.js",
   "assets": {
     "directory": ".open-next/assets",
