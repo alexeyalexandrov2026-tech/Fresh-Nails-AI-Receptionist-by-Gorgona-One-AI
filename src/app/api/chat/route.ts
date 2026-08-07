@@ -39,19 +39,20 @@ export async function POST(request: Request) {
     });
 
     if (!difyResponse.ok) {
-      const errorData = await difyResponse.json();
-      throw new Error(`Dify API error: ${JSON.stringify(errorData)}`);
+      const errorText = await difyResponse.text();
+      console.error(`Dify API error (status ${difyResponse.status}): ${errorText}`);
+      return NextResponse.json({ error: 'Dify API error', status: difyResponse.status, details: errorText }, { status: 502 });
     }
 
     const data = await difyResponse.json();
-    
+
     return NextResponse.json({
       answer: data.answer,
       conversation_id: data.conversation_id,
     });
-    
+
   } catch (error: any) {
-    console.error('Chat API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Chat API Error:', error?.message || String(error));
+    return NextResponse.json({ error: 'Internal Server Error', details: error?.message || String(error) }, { status: 500 });
   }
 }
